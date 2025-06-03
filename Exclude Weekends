@@ -1,0 +1,4 @@
+IsWorkDay = SWITCH(WEEKDAY('Table'[Date Column]),1,0,7,0,1)
+
+Put filter on field as:
+1  = Workday
