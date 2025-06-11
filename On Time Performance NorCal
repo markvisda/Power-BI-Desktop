@@ -1,0 +1,13 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+On Time Performance Measurement (30 Days)
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/98995997-b673-4b82-b527-7d71a8e89ded/ReportSectiond94c4ca98affecb5f8a0?experience=power-bi
+
+Query:
+Load Delivery Stats
+let
+    Source = Sql.Database("sql16", "DWS No Rep Data"),
+    #"dbo_Load Delivery Stats" = Source{[Schema="dbo",Item="Load Delivery Stats"]}[Data]
+in
+    #"dbo_Load Delivery Stats"
