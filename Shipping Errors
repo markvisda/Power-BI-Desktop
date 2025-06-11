@@ -1,0 +1,32 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Mis-Shipments
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/d00cc0b0-289d-4af0-be4e-dffac1088395/ReportSection4b50b835976158038698?experience=power-bi
+
+1.
+Mis-shipments
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/CustomerInformation", [Implementation=null, ApiVersion=15]),
+    #"6b7cd6c1-39f5-4985-9b76-1e6af99e7019" = Source{[Id="6b7cd6c1-39f5-4985-9b76-1e6af99e7019"]}[Items],
+    #"Expanded FieldValuesAsText: Incident manager and Reported by" = Table.ExpandRecordColumn(#"6b7cd6c1-39f5-4985-9b76-1e6af99e7019", "FieldValuesAsText", {"IncidentDetails", "Incidentlocation", "IncidentManager", "Reportedby"}, {"FieldValuesAsText.IncidentDetails", "FieldValuesAsText.Incidentlocation", "FieldValuesAsText.IncidentManager", "FieldValuesAsText.Reportedby"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Expanded FieldValuesAsText: Incident manager and Reported by",{{"Statis", "Status"}, {"FieldValuesAsText.Reportedby", "Reported By"}, {"FieldValuesAsText.IncidentManager", "Incident Manager"}}),
+    #"Filtered Rows: Impactstart <> null" = Table.SelectRows(#"Renamed Columns", each ([Impactstart] <> null))
+in
+    #"Filtered Rows: Impactstart <> null"
+
+2.
+Mis-shipments - Grouped
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/CustomerInformation", [Implementation=null, ApiVersion=15]),
+    #"6b7cd6c1-39f5-4985-9b76-1e6af99e7019" = Source{[Id="6b7cd6c1-39f5-4985-9b76-1e6af99e7019"]}[Items],
+    #"Expanded FieldValuesAsText: Incident manager and Reported by" = Table.ExpandRecordColumn(#"6b7cd6c1-39f5-4985-9b76-1e6af99e7019", "FieldValuesAsText", {"IncidentManager", "Reportedby"}, {"FieldValuesAsText.IncidentManager", "FieldValuesAsText.Reportedby"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Expanded FieldValuesAsText: Incident manager and Reported by",{{"Statis", "Status"}, {"FieldValuesAsText.Reportedby", "Reported By"}, {"FieldValuesAsText.IncidentManager", "Incident Manager"}}),
+    #"Filtered Rows: Impactstart <> null" = Table.SelectRows(#"Renamed Columns", each [Impactstart] <> null),
+    #"Grouped Rows" = Table.Group(#"Filtered Rows: Impactstart <> null", {"Impactstart", "Title"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+    #"Sorted Rows" = Table.Sort(#"Grouped Rows",{{"Impactstart", Order.Descending}}),
+    #"Filtered Rows: YTD" = Table.SelectRows(#"Sorted Rows", each Date.IsInCurrentYear([Impactstart]))
+in
+    #"Filtered Rows: YTD"
