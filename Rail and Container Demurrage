@@ -1,0 +1,39 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Demurrage
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/88bc8b6c-6115-47ce-b4e0-4391322be6be/af34cd241c4ec0a151dc?experience=power-bi
+
+Queries:
+1.
+Rail Demurrage
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/PlanningTeam", [ApiVersion = 15]),
+    #"68371188-989a-4112-a4d8-da362c5131a4" = Source{[Id="68371188-989a-4112-a4d8-da362c5131a4"]}[Items],
+    #"Renamed Columns" = Table.RenameColumns(#"68371188-989a-4112-a4d8-da362c5131a4",{{"ID", "ID.1"}}),
+    #"Added Conditional Column: Facility Revised" = Table.AddColumn(#"Renamed Columns", "Facility Revised", each if Text.Contains([Facility], "Napa") then "Napa" else if Text.Contains([Facility], "Rancho") then "Rancho" else if Text.Contains([Facility], "Stockton") then "Stockton" else if Text.Contains([Facility], "Vernon") then "Vernon" else if Text.Contains([Facility], "Watson") then "Watson" else if Text.Contains([Facility], "Phoenix") then "Phoenix" else "Unclasified"),
+    #"Filtered Rows" = Table.SelectRows(#"Added Conditional Column: Facility Revised", each true)
+in
+    #"Filtered Rows"
+
+2.
+Per Diem Demurrage
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/PlanningTeam", [ApiVersion = 15]),
+    #"2d3dfe9d-3743-44db-b326-95fb91c33762" = Source{[Id="2d3dfe9d-3743-44db-b326-95fb91c33762"]}[Items],
+    #"Renamed Columns" = Table.RenameColumns(#"2d3dfe9d-3743-44db-b326-95fb91c33762",{{"ID", "ID.1"}}),
+    #"Filtered Rows: Date <> null" = Table.SelectRows(#"Renamed Columns", each ([Date] <> null))
+in
+    #"Filtered Rows: Date <> null"
+
+3.
+v_Container_Port_Demurrage_PowerBI
+
+let
+    Source = Sql.Database("sql16", "DWS No Rep Data"),
+    dbo_v_Container_Port_Demurrage_PowerBI = Source{[Schema="dbo",Item="v_Container_Port_Demurrage_PowerBI"]}[Data],
+    #"Filtered Rows: Charge <> 0" = Table.SelectRows(dbo_v_Container_Port_Demurrage_PowerBI, each [Charge] <> 0)
+in
+    #"Filtered Rows: Charge <> 0"
