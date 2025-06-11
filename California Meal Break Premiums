@@ -1,0 +1,15 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Meal Break Premiums
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/fd17d3b6-8d07-43f2-b203-56c1a446d5db/bc126d99928a4266c1c2?experience=power-bi
+
+Query:
+v_ExecDashboard_PremiumsTotalByTerminal
+
+let
+    Source = Sql.Database("sql16", "DWS No Rep Data"),
+    dbo_v_ExecDashboard_PremiumsTotalByTerminal = Source{[Schema="dbo",Item="v_ExecDashboard_PremiumsTotalByTerminal"]}[Data],
+    #"Added Conditional Column: Fleet Revised" = Table.AddColumn(dbo_v_ExecDashboard_PremiumsTotalByTerminal, "Fleet Revised", each if Text.Contains([Fleet], "Alameda") then "Alameda" else if Text.Contains([Fleet], "Harbor") then "Harbor" else if Text.Contains([Fleet], "Napa") then "Napa" else if Text.Contains([Fleet], "Pittsburg") then "Pittsburg" else if Text.Contains([Fleet], "Portland") then "Portland" else if Text.Contains([Fleet], "Rancho") then "Rancho" else if Text.Contains([Fleet], "Stockton") then "Stockton" else if Text.Contains([Fleet], "Tacoma") then "Tacoma" else if Text.Contains([Fleet], "Watson") then "Watson" else if Text.Contains([Fleet], "CEC") then "CEC" else [Fleet])
+in
+    #"Added Conditional Column: Fleet Revised"
