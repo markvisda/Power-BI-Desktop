@@ -1,0 +1,14 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Transportation Revenue/Minute
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/0136d00b-86b5-4cbd-9101-994b187bc602/ReportSection48f2d422d5af716e4eed?experience=power-bi
+
+Query:
+Planned Driver Hours and Load Count by date Summary
+
+let
+    Source = Sql.Database("sql16", "DWS No Rep Data"),
+    #"dbo_Planned Driver Hours and Load Count by date Summary" = Source{[Schema="dbo",Item="Planned Driver Hours and Load Count by date Summary"]}[Data]
+in
+    #"dbo_Planned Driver Hours and Load Count by date Summary"
