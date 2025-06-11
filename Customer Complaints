@@ -1,0 +1,29 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Customer Complaints
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/b7692412-1d38-4d9c-9410-21389c1241d4/f1b803080839f62a7757?experience=power-bi
+
+Queries:
+
+1.
+Customer Complaints
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/salesteam", [ApiVersion = 15]),
+    #"5dd6b046-268d-4d79-b51a-dcfb48303fc4" = Source{[Id="5dd6b046-268d-4d79-b51a-dcfb48303fc4"]}[Items],
+    #"Renamed Columns" = Table.RenameColumns(#"5dd6b046-268d-4d79-b51a-dcfb48303fc4",{{"ID", "ID.1"}}),
+    #"Expanded FieldValuesForEdit" = Table.ExpandRecordColumn(#"Renamed Columns", "FieldValuesForEdit", {"OData__x0063_lr2", "Title", "Complaint_x0020_Type", "Dept_x002e__x002f_Facility", "cqfj", "Resolved", "OData__x007a_bh0", "ContentTypeId", "OData__ModerationComments", "File_x0020_Type", "ComplianceAssetId", "sp1q", "Link_x0020_to_x0020_Complaint", "ID", "Modified", "Created", "Author", "Editor", "OData__HasCopyDestinations", "OData__CopySource", "owshiddenversion", "WorkflowVersion", "OData__UIVersion", "OData__UIVersionString", "Attachments", "OData__ModerationStatus", "InstanceID", "Order", "GUID", "WorkflowInstanceID", "FileRef", "FileDirRef", "Last_x0020_Modified", "Created_x0020_Date", "FSObjType", "SortBehavior", "FileLeafRef", "UniqueId", "SyncClientId", "ProgId", "ScopeId", "MetaInfo", "OData__Level", "OData__IsCurrentVersion", "ItemChildCount", "FolderChildCount", "Restricted", "OriginatorId", "NoExecute", "ContentVersion", "OData__ComplianceFlags", "OData__ComplianceTag", "OData__ComplianceTagWrittenTime", "OData__ComplianceTagUserId", "AccessPolicy", "OData__VirusStatus", "OData__VirusVendorID", "OData__VirusInfo", "AppAuthor", "AppEditor", "SMTotalSize", "SMLastModifiedDate", "SMTotalFileStreamSize", "SMTotalFileCount"}, {"FieldValuesForEdit.OData__x0063_lr2", "FieldValuesForEdit.Title", "FieldValuesForEdit.Complaint_x0020_Type", "FieldValuesForEdit.Dept_x002e__x002f_Facility", "FieldValuesForEdit.cqfj", "FieldValuesForEdit.Resolved", "FieldValuesForEdit.OData__x007a_bh0", "FieldValuesForEdit.ContentTypeId", "FieldValuesForEdit.OData__ModerationComments", "FieldValuesForEdit.File_x0020_Type", "FieldValuesForEdit.ComplianceAssetId", "FieldValuesForEdit.sp1q", "FieldValuesForEdit.Link_x0020_to_x0020_Complaint", "FieldValuesForEdit.ID", "FieldValuesForEdit.Modified", "FieldValuesForEdit.Created", "FieldValuesForEdit.Author", "FieldValuesForEdit.Editor", "FieldValuesForEdit.OData__HasCopyDestinations", "FieldValuesForEdit.OData__CopySource", "FieldValuesForEdit.owshiddenversion", "FieldValuesForEdit.WorkflowVersion", "FieldValuesForEdit.OData__UIVersion", "FieldValuesForEdit.OData__UIVersionString", "FieldValuesForEdit.Attachments", "FieldValuesForEdit.OData__ModerationStatus", "FieldValuesForEdit.InstanceID", "FieldValuesForEdit.Order", "FieldValuesForEdit.GUID", "FieldValuesForEdit.WorkflowInstanceID", "FieldValuesForEdit.FileRef", "FieldValuesForEdit.FileDirRef", "FieldValuesForEdit.Last_x0020_Modified", "FieldValuesForEdit.Created_x0020_Date", "FieldValuesForEdit.FSObjType", "FieldValuesForEdit.SortBehavior", "FieldValuesForEdit.FileLeafRef", "FieldValuesForEdit.UniqueId", "FieldValuesForEdit.SyncClientId", "FieldValuesForEdit.ProgId", "FieldValuesForEdit.ScopeId", "FieldValuesForEdit.MetaInfo", "FieldValuesForEdit.OData__Level", "FieldValuesForEdit.OData__IsCurrentVersion", "FieldValuesForEdit.ItemChildCount", "FieldValuesForEdit.FolderChildCount", "FieldValuesForEdit.Restricted", "FieldValuesForEdit.OriginatorId", "FieldValuesForEdit.NoExecute", "FieldValuesForEdit.ContentVersion", "FieldValuesForEdit.OData__ComplianceFlags", "FieldValuesForEdit.OData__ComplianceTag", "FieldValuesForEdit.OData__ComplianceTagWrittenTime", "FieldValuesForEdit.OData__ComplianceTagUserId", "FieldValuesForEdit.AccessPolicy", "FieldValuesForEdit.OData__VirusStatus", "FieldValuesForEdit.OData__VirusVendorID", "FieldValuesForEdit.OData__VirusInfo", "FieldValuesForEdit.AppAuthor", "FieldValuesForEdit.AppEditor", "FieldValuesForEdit.SMTotalSize", "FieldValuesForEdit.SMLastModifiedDate", "FieldValuesForEdit.SMTotalFileStreamSize", "FieldValuesForEdit.SMTotalFileCount"})
+in
+    #"Expanded FieldValuesForEdit"
+
+2.
+Customer Complaints (2)
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/CustomerInformation", [Implementation=null, ApiVersion=15]),
+    #"ff51e029-a1cf-4431-b38c-de27d9860585" = Source{[Id="ff51e029-a1cf-4431-b38c-de27d9860585"]}[Items],
+    #"Renamed Columns" = Table.RenameColumns(#"ff51e029-a1cf-4431-b38c-de27d9860585",{{"ID", "ID.1"}}),
+    #"Added Conditional Column: Resolved" = Table.AddColumn(#"Renamed Columns", "Resolved", each if [field_5] = true then "Yes" else "No")
+in
+    #"Added Conditional Column: Resolved"
