@@ -4,6 +4,8 @@ https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b
 EBITDA/DSO
 https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/fd17d3b6-8d07-43f2-b203-56c1a446d5db/ReportSection700bd2db1c956b9dd850?openDashboardSource=Commenting&experience=power-bi
 
+Query: Power BI Reporting - Monthly
+
 let
     Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/Finance/", [ApiVersion = 15]),
     #"b6792c34-4891-4481-a949-64519bc71751" = Source{[Id="b6792c34-4891-4481-a949-64519bc71751"]}[Items],
