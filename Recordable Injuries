@@ -1,0 +1,17 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Recordable Injuries
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/fd17d3b6-8d07-43f2-b203-56c1a446d5db/ReportSection89330851828b4b936e6c?experience=power-bi
+
+Query:
+Safety Review
+
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/SafetyTeamSite", [ApiVersion = 15]),
+    #"1b84785f-35cd-417e-a23a-808f87cdadf0" = Source{[Id="1b84785f-35cd-417e-a23a-808f87cdadf0"]}[Items],
+    #"Renamed Columns" = Table.RenameColumns(#"1b84785f-35cd-417e-a23a-808f87cdadf0",{{"ID", "ID.1"}}),
+    #"Added Conditional Column: Date" = Table.AddColumn(#"Renamed Columns", "Date", each if [field_0] <> null then [field_0] else [field_7]),
+    #"Filtered Rows: Date <> null" = Table.SelectRows(#"Added Conditional Column: Date", each ([Date] <> null))
+in
+    #"Filtered Rows: Date <> null"
