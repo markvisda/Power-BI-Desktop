@@ -1,9 +1,12 @@
 Dashboard: Executive Scorecard
 https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
 
-1.
-Cash
+Queries:
+1. 
+Cash:
 https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/fd17d3b6-8d07-43f2-b203-56c1a446d5db/ReportSection94b39d58a15075214837?experience=power-bi
+
+Power BI Reporting - No Filter
 
 let
     Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/Finance/", [ApiVersion = 15]),
@@ -12,8 +15,10 @@ in
     #"b6792c34-4891-4481-a949-64519bc71751"
 
 2. 
-Total Sales
+Total Sales:
 https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/fd17d3b6-8d07-43f2-b203-56c1a446d5db/ReportSection94b39d58a15075214837?experience=power-bi
+
+Power BI Reporting
 
 let
     Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/Finance/", [ApiVersion = 15]),
