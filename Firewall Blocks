@@ -1,0 +1,12 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Firewall Blocks
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/7c53f3f76e2eda78ad6e?experience=power-bi
+
+Query:
+let
+    Source = SharePoint.Tables("https://mhxone.sharepoint.com/sites/TechTeam", [Implementation="2.0", ViewMode="All"]),
+    #"67cabdf8-2eb9-4f2c-b619-6bd1514d8470" = Source{[Id="67cabdf8-2eb9-4f2c-b619-6bd1514d8470"]}[Items]
+in
+    #"67cabdf8-2eb9-4f2c-b619-6bd1514d8470"
