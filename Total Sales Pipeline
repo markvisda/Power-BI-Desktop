@@ -1,0 +1,12 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Total Sales Pipeline
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/ed8772bf-1b45-4d7c-ad89-313166ba0930/ReportSectionc9db58f5150c10d9d037?experience=power-bi
+
+Query:
+let
+    Source = Sql.Database("sql16", "DWS No Rep Data"),
+    dbo_v_TLP_Sales_Opportunity_PBI = Source{[Schema="dbo",Item="v_TLP_Sales_Opportunity_PBI"]}[Data]
+in
+    dbo_v_TLP_Sales_Opportunity_PBI
