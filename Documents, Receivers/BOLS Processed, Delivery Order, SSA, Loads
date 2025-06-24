@@ -1,0 +1,31 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Documents
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/cc94233f054cc96ec4d7?experience=power-bi
+
+Receivers Processed
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/edc36776d1a0d23e1e35?experience=power-bi
+
+BOLs Processed
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/4b5a8c057d1911502846?experience=power-bi
+
+Deilvery Order
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/86f6a871cb2c4e2db883?experience=power-bi
+
+SSA
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/fb323978bcf35cd44926?experience=power-bi
+
+Loads
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cb072611-6de7-4434-af9f-728b9ef83e2c/03f401a351ff8f9a52cf?experience=power-bi
+
+Query:
+let
+    Source = Excel.Workbook(Web.Contents("https://mhxone.sharepoint.com/sites/CEC/Shared%20Documents/DS%20updated%20reporting%2020250226.xlsx"), null, true),
+    #"SUMMARY DS_Sheet" = Source{[Item="SUMMARY DS",Kind="Sheet"]}[Data],
+    #"Promoted Headers" = Table.PromoteHeaders(#"SUMMARY DS_Sheet", [PromoteAllScalars=true]),
+    #"Changed Type: % of receiver processed and % BOL processed to %" = Table.TransformColumnTypes(#"Promoted Headers",{{"% of recevier processed", Percentage.Type}, {"% BOL processed", Percentage.Type}}),
+    #"Filtered Rows: Error reported(Total Ct) is not null and [Dwell] is not null. and Total Document Ct (DS) <> 0" = Table.SelectRows(#"Changed Type: % of receiver processed and % BOL processed to %", each ([#"Errors reported(Total Ct)"] <> null) and ([Dwell] <> null) and ([#"Receiver Ct Processed(DS)"] <> null) and ([#"Total Document Ct (DS)"] <> 0)),
+    #"Changed Type: Dwell = Whole Number" = Table.TransformColumnTypes(#"Filtered Rows: Error reported(Total Ct) is not null and [Dwell] is not null. and Total Document Ct (DS) <> 0",{{"Dwell", Int64.Type}})
+in
+    #"Changed Type: Dwell = Whole Number"
