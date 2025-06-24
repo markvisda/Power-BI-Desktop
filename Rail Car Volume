@@ -1,0 +1,23 @@
+Dashboard: Executive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+Rail Car Volume
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/fd17d3b6-8d07-43f2-b203-56c1a446d5db/ReportSectiond935e45111944607161a?experience=power-bi
+
+Query:
+let
+    Source = Sql.Database("sql16", "DWS Rep Data"),
+    dbo_v_RailCarCountDaily = Source{[Schema="dbo",Item="v_RailCarCountDaily"]}[Data],
+    #"Inserted Year" = Table.AddColumn(dbo_v_RailCarCountDaily, "Year", each Date.Year([Date]), Int64.Type),
+    #"Inserted Month" = Table.AddColumn(#"Inserted Year", "Month", each Date.Month([Date]), Int64.Type),
+    #"Added Custom: Rail Terminal+Yr/Mo" = Table.AddColumn(#"Inserted Month", "Rail Terminal+Yr/Mo", each [Rail Terminal] & " + " & Text.From([Year]) & " / " & Text.From([Month])),
+    #"Filtered Rows: Rail Terminal+Yr/Mo <> Phoenix pre-4/1/2024" = Table.SelectRows(#"Added Custom: Rail Terminal+Yr/Mo", each ([#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2018 / 12" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2019 / 2" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 1" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 10" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 11" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 12" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 6" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 7" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 8" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2022 / 9" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 1" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 10" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 11" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 12" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 2" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 3" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 4" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 5" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 6" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 7" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 8" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2023 / 9" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2024 / 1" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2024 / 2" and [#"Rail Terminal+Yr/Mo"] <> "Phoenix + 2024 / 3"))
+in
+    #"Filtered Rows: Rail Terminal+Yr/Mo <> Phoenix pre-4/1/2024"
+
+Target:
+let
+    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("XdDLDcMwDAPQXXwOUFEfO54lyP5r1JZahO31gZZEX1dTUX8J2tGmWbuPr2hKJ7ElkC5EvkOnk8QWHyQ9n5kSjR2aQXJmyCfRTFI8BKlRtA9IEib9uzOq3pplRJUyEGVBDE55pianIimcKCvih0YSOtFZ4/mu7Ijnb+LTEU6p6rhKEmltXOPvNw==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Year/Month" = _t, Target = _t]),
+    #"Changed Type to Whole Number: Target" = Table.TransformColumnTypes(Source,{{"Target", Int64.Type}})
+in
+    #"Changed Type to Whole Number: Target"
