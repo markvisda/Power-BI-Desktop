@@ -1,0 +1,99 @@
+Staffing Report
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/06ab9cf5-ddcf-4f8b-8123-e72fd6457aae/ReportSectiondd914cb31c97d438b82f?experience=power-bi
+
+1.
+Page: Tractor
+Query/Table Name: Tractor List 
+let
+    Source = Sql.Databases("sql16"),
+    #"EQ Manager" = Source{[Name="EQ Manager"]}[Data],
+    #"dbo_Tractor List" = #"EQ Manager"{[Schema="dbo",Item="Tractor List"]}[Data],
+    #"Filtered Rows: Company ID ref = 9" = Table.SelectRows(#"dbo_Tractor List", each ([Company ID ref] = 9)),
+    #"Added Conditional Column: Status Modified" = Table.AddColumn(#"Filtered Rows: Company ID ref = 9", "Status Modified", each if [StatusText] = "In Service" then "In Service" else "Out of Service"),
+    #"Added Conditional Column: LocationText(Revised)" = Table.AddColumn(#"Added Conditional Column: Status Modified", "LocationText(Revised)", each if Text.Contains([LocationText], "Carson") then "Watson" else [LocationText]),
+    #"Changed Type: EquipIdentfier to Text" = Table.TransformColumnTypes(#"Added Conditional Column: LocationText(Revised)",{{"EquipmentIdentifier", type text}}),
+    #"Added Conditional Column: EV / Non-EV" = Table.AddColumn(#"Changed Type: EquipIdentfier to Text", "EV / Non-EV", each if Text.Contains([ModelName], "EV") then "EV" else "Non-EV")
+in
+    #"Added Conditional Column: EV / Non-EV"
+
+2. 
+Page: Drivers+Tractors
+Query/Table Name for Tractors: Same as #1
+
+Query/Table Name for drivers: DriverINFO_current_temp_LOA
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_DriverINFO_current_temp_LOA = #"DWS No Rep Data"{[Schema="dbo",Item="DriverINFO_current_temp_LOA"]}[Data],
+    #"Filtered Rows: company ID ref = 9" = Table.SelectRows(dbo_DriverINFO_current_temp_LOA, each ([company ID ref] = 9)),
+    #"Added Conditional Column: Title Modified" = Table.AddColumn(#"Filtered Rows: company ID ref = 9", "Title Modified", each if Text.Contains([Title], "temp") then "Temp" else if Text.Contains([Title], "loa") then "LOA" else [Title]),
+    #"Added Conditional Column: Fleet Revised" = Table.AddColumn(#"Added Conditional Column: Title Modified", "Fleet Revised", each if Text.Contains([Fleet], "Alameda") then "Alameda" else if Text.Contains([Fleet], "Napa") then "Napa" else if Text.Contains([Fleet], "Phoenix") then "Phoenix" else if Text.Contains([Fleet], "Pittsburg") then "Pittsburg" else if Text.Contains([Fleet], "Rancho") then "Rancho" else if Text.Contains([Fleet], "Stockton") then "Stockton" else if Text.Contains([Fleet], "Watson") then "Watson" else [Fleet]),
+    #"Added Conditional Column: Shift Modified" = Table.AddColumn(#"Added Conditional Column: Fleet Revised", "Shift Modified", each if [Shift] = "Day" then "AM" else "PM"),
+    #"Added Conditional Column: Title Color Format" = Table.AddColumn(#"Added Conditional Column: Shift Modified", "Title Color Format", each if Text.Contains([Title Modified], "Temp") then 2 else if [Title Modified] = "LOA" then 3 else 1),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Conditional Column: Title Color Format",{"Title Color Format"})
+in
+    #"Removed Columns"
+
+3.
+Page: Driver Type+Shift
+Query/Table Name: Same as #2
+
+4.
+Page: Warehouse
+Query/Table Name graph:  Warehouse_staff_count
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_Warehouse_staff_count = #"DWS No Rep Data"{[Schema="dbo",Item="Warehouse_staff_count"]}[Data],
+    #"Added Conditional Column: Terminal Consolidated" = Table.AddColumn(dbo_Warehouse_staff_count, "Terminal Consolidated", each if Text.Contains([Terminal], "Alameda") then "Alameda" else if Text.Contains([Terminal], "Harbor") then "Harbor" else if Text.Contains([Terminal], "Napa") then "Napa" else if Text.Contains([Terminal], "Rancho") then "Rancho" else if Text.Contains([Terminal], "Stockton") then "Stockton" else if Text.Contains([Terminal], "Vernon") then "Vernon" else if Text.Contains([Terminal], "Watson") then "Watson" else if Text.Contains([Terminal], "Phoenix") then "Phoenix" else if Text.Contains([Terminal], "Portland") then "Portland" else if Text.Contains([Terminal], "Tacoma") then "Tacoma" else [Terminal]),
+    #"Added Conditional Column: Team (Sub)" = Table.AddColumn(#"Added Conditional Column: Terminal Consolidated", "Team (Sub)", each if Text.Contains([Team], "crane") then "-Crane" else if Text.Contains([Team], "fuel") then "-Fuel" else if Text.Contains([Team], "Soda Ash") then "-Soda Ash" else if Text.Contains([Team], "Fly Ash") then "-Fly Ash" else ""),
+    #"Added Custom" = Table.AddColumn(#"Added Conditional Column: Team (Sub)", "Terminal and Team", each [Terminal Consolidated]&[#"Team (Sub)"])
+in
+    #"Added Custom"
+
+Query/Table Name details table: Warehouse_staff_details
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_Warehouse_staff_details = #"DWS No Rep Data"{[Schema="dbo",Item="Warehouse_staff_details"]}[Data],
+    #"Added Conditional Column: Terminal Consolidated" = Table.AddColumn(dbo_Warehouse_staff_details, "Terminal Consolidated", each if Text.Contains([Terminal], "Alameda") then "Alameda" else if Text.Contains([Terminal], "Harbor") then "Harbor" else if Text.Contains([Terminal], "Watson") then "Watson" else if Text.Contains([Terminal], "Vernon") then "Vernon" else if Text.Contains([Terminal], "Napa") then "Napa" else if Text.Contains([Terminal], "Rancho") then "Rancho" else if Text.Contains([Terminal], "Helendale") then "Helendale" else if Text.Contains([Terminal], "Stockton") then "Stockton" else if Text.Contains([Terminal], "Phoenix") then "Phoenix" else if Text.Contains([Terminal], "Portland") then "Portland" else if Text.Contains([Terminal], "Tacoma") then "Tacoma" else [Terminal]),
+    #"Added Conditional Column: Team (sub)" = Table.AddColumn(#"Added Conditional Column: Terminal Consolidated", "Team (sub)", each if Text.Contains([Team], "Soda Ash") then "-Soda Ash" else if Text.Contains([Team], "Crane") then "-Crane" else if Text.Contains([Team], "Fuel") then "-Fuel" else if Text.Contains([Team], "Fly Ash") then "-Fly Ash" else null),
+    #"Added Conditional Column: LOA" = Table.AddColumn(#"Added Conditional Column: Team (sub)", "Status", each if Text.EndsWith([Title], "LOA") then "LOA" else "Active")
+in
+    #"Added Conditional Column: LOA"
+
+5. MHX Daily Prod Today
+Query/Table Name Planned Driver Hours and Load Count by date Summary Today
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_Planned Driver Hours and Load Count by date Summary Today" = #"DWS No Rep Data"{[Schema="dbo",Item="Planned Driver Hours and Load Count by date Summary Today"]}[Data]
+in
+    #"dbo_Planned Driver Hours and Load Count by date Summary Today"
+
+6. MHX Daily Prod Past 5 Days
+Query/Table Name: Planned Driver Hours and Load Count by date Summary
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_Planned Driver Hours and Load Count by date Summary" = #"DWS No Rep Data"{[Schema="dbo",Item="Planned Driver Hours and Load Count by date Summary"]}[Data],
+    #"Added Conditional Column: Division New" = Table.AddColumn(#"dbo_Planned Driver Hours and Load Count by date Summary", "Division New", each if Text.Contains([Division], "Stockton") then "NorCal Fleet" else [Division]),
+    #"Added Conditional Column: Division Short" = Table.AddColumn(#"Added Conditional Column: Division New", "Division Short", each if Text.Contains([Division New], "NorCal") then "Norcal" else if Text.Contains([Division New], "SoCal") then "SoCal" else "Other")
+in
+    #"Added Conditional Column: Division Short"
+
+7. Actual to Standard (MTD)
+8. Actual to Standard
+9. Actual to Std (Line)
+10. Actual to Budget
+7-8 uses the below query/table name: v_data_warehouse_TerminalTotalWorkHoursWithStandardHours
+let
+    Source = Sql.Database("sql16", "DWS No Rep Data"),
+    dbo_v_data_warehouse_TerminalTotalWorkHoursWithStandardHours = Source{[Schema="dbo",Item="v_data_warehouse_TerminalTotalWorkHoursWithStandardHours"]}[Data],
+    #"Added Conditional Column: Terminal Revised" = Table.AddColumn(dbo_v_data_warehouse_TerminalTotalWorkHoursWithStandardHours, "Terminal Revised", each if Text.Contains([Terminal], "Helendale") then "Helendale" else if Text.Contains([Terminal], "Harbor") then "Harbor" else if Text.Contains([Terminal], "Napa") then "Napa" else if Text.Contains([Terminal], "NAPA") then "Napa" else if Text.Contains([Terminal], "Phoenix") then "Phoenix" else if Text.Contains([Terminal], "Portland") then "Portland" else if Text.Contains([Terminal], "Rancho") then "Rancho" else if Text.Contains([Terminal], "Stockton") then "Stockton" else if Text.Contains([Terminal], "Tacoma") then "Tacoma" else if Text.Contains([Terminal], "Vernon") then "Vernon" else if Text.Contains([Terminal], "Watson") then "Watson" else if Text.Contains([Terminal], "Alameda") then "Alameda" else if Text.Contains([Terminal], "Arrow") then "Arrow" else [Terminal]),
+    #"Changed Type: Date to Date Only" = Table.TransformColumnTypes(#"Added Conditional Column: Terminal Revised",{{"Date", type date}})
+in
+    #"Changed Type: Date to Date Only"
+
+
+
