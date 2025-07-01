@@ -1,0 +1,94 @@
+1.
+P2P - Exectutive Scorecard
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/dashboards/b37e23cc-ab51-4bb4-84af-a8d72f816414?experience=power-bi
+
+See:
+https://github.com/markvisda/Power-BI-Desktop/blob/Power-Query/P2P%20-%20Executive%20Scorecard
+
+2.
+Performance to Plan (6 months, MTD, WTD)
+Query/Table: P2P by driver by day
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_P2P by driver by day" = #"DWS No Rep Data"{[Schema="dbo",Item="P2P by driver by day"]}[Data],
+    #"Filtered Rows: company ID ref = 9" = Table.SelectRows(#"dbo_P2P by driver by day", each [company ID ref] = 9),
+    #"Added Custom: Start Time (Text)" = Table.AddColumn(#"Filtered Rows: company ID ref = 9", "Start Time (Text)", each [Start Time]),
+    #"Changed Type: Start Time (Text) is Text" = Table.TransformColumnTypes(#"Added Custom: Start Time (Text)",{{"Start Time (Text)", type text}}),
+    #"Added Conditional Column: Shift" = Table.AddColumn(#"Changed Type: Start Time (Text) is Text", "Shift", each if Text.Contains([#"Start Time (Text)"], "AM") then "AM" else "PM")
+in
+    #"Added Conditional Column: Shift"
+
+3.
+Performance to Plan (Previous Month)
+
+3.a. Prev Mo Overview
+Table: P2P by driver by day (Avg) - Unfiltered Months - Power BI
+
+Query:
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_P2P by driver by day (Avg) - Unfiltered Months - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="P2P by driver by day (Avg) - Unfiltered Months - Power BI"]}[Data]
+in
+    #"dbo_P2P by driver by day (Avg) - Unfiltered Months - Power BI"
+
+
+3.b. Prev Mo NorCal
+Table: Same as 3.a.
+
+
+3.c. Prev Mo SoCal
+Table: Same as 3.a.
+
+
+3.d Prev Mo SoCal East
+Line Graph: P2P by driver by day - Unfiltered Month - Power BI (Grouped_Fleet)
+Bar Graph: P2P by driver by day - Unfiltered Month - Power BI
+
+Query: P2P by driver by day - Unfiltered Month - Power BI (Grouped_Fleet)
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_P2P by driver by day - Unfiltered Month - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="P2P by driver by day - Unfiltered Month - Power BI"]}[Data],
+    #"Grouped Rows" = Table.Group(#"dbo_P2P by driver by day - Unfiltered Month - Power BI", {"Plan Date", "Fleet"}, {{"Total_Driver_Minutes", each List.Sum([Total Driver Minutes]), type number}, {"Total_Planned_Minutes", each List.Sum([Total Planned Minutes]), type number}}),
+    #"Filtered Rows" = Table.SelectRows(#"Grouped Rows", each true),
+    #"Added Conditional Column: Fleet Subtype" = Table.AddColumn(#"Filtered Rows", "Fleet Subtype", each if Text.Contains([Fleet], "Pittsburg") then "NorCal" else if Text.Contains([Fleet], "Stockton") then "NorCal" else if Text.Contains([Fleet], "Napa") then "SoCal East" else if Text.Contains([Fleet], "Rancho") then "SoCal East" else if Text.Contains([Fleet], "Alameda") then "SoCal East" else if Text.Contains([Fleet], "Vernon") then "SoCal West" else if Text.Contains([Fleet], "Watson") then "SoCal West" else if Text.Contains([Fleet], "He;endale") then "SoCal West" else "Unclassified")
+in
+    #"Added Conditional Column: Fleet Subtype"
+
+Query: P2P by driver by day - Unfiltered Month - Power BI
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_P2P by driver by day - Unfiltered Month - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="P2P by driver by day - Unfiltered Month - Power BI"]}[Data],
+    #"Added Conditional Column: Fleet Subtype" = Table.AddColumn(#"dbo_P2P by driver by day - Unfiltered Month - Power BI", "Fleet Subtype", each if Text.Contains([Fleet], "Pittsburg") then "NorCal" else if Text.Contains([Fleet], "Stockton") then "NorCal" else if Text.Contains([Fleet], "Napa") then "SoCal East" else if Text.Contains([Fleet], "Rancho") then "SoCal East" else if Text.Contains([Fleet], "Alameda") then "SoCal East" else if Text.Contains([Fleet], "Vernon") then "SoCal West" else if Text.Contains([Fleet], "Watson") then "SoCal West" else if Text.Contains([Fleet], "Helendale") then "SoCal West" else "Unclassified")
+in
+    #"Added Conditional Column: Fleet Subtype"
+
+
+3.e Prev Mo SoCal West
+Line and Bar graph: Same as 3.d.
+
+
+3.f. Prev Mo - Free View
+Table: Same as 3.d. (Bar graph)
+
+
+3.g. MHX P2P KPI
+Bar graph: Same as 3.f.
+Line graph: Same as 3.a.
+
+
+3.h. MHX P2P KPI (Weekly)
+Bar graph: Same as 3.f. 
+Line graph: Same as 3.a.
+
+
+3.i. MHX Transportation Mins KPI
+Same as 3.f.
+
+
+
+
+
