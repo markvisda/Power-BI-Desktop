@@ -1,0 +1,68 @@
+On-Time Planning Measurement
+
+1. On-Time Planning Measurement (MTD)
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/07d9e6d3-10fb-46a9-856c-6feb35e20929?experience=power-bi
+
+1.a. Page: Average On-Time
+Table: Load Plan Age Stats - MTD - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_Load Plan Age Stats - MTD - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="Load Plan Age Stats - MTD - Power BI"]}[Data]
+in
+    #"dbo_Load Plan Age Stats - MTD - Power BI"
+
+1.b. Page: NorCal - Table
+Table: Load Plan Age Stats - MTD (% Format) - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_Load Plan Age Stats - MTD (% Format) - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="Load Plan Age Stats - MTD (% Format) - Power BI"]}[Data]
+in
+    #"dbo_Load Plan Age Stats - MTD (% Format) - Power BI"
+
+1.c. Page: NorCal - Graph
+Table: Same as 1.a.
+
+1.d. Page: SoCal - Table
+Table: Same as 1.b.
+
+1.e. Page: SoCal - Graph
+Table: same as 1.a.
+
+
+2. On-Time Planning Measurement (Current Day)
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/1bd43c24-b82b-4b2b-976a-917d24aec36d/ReportSectiond6aeeb1ad64d646c5e98?experience=power-bi
+
+2.a. Page: Average On-Time
+Table: Load Plan Age Stats - Current Day - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_Load Plan Age Stats - Current Day - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="Load Plan Age Stats - Current Day - Power BI"]}[Data]
+in
+    #"dbo_Load Plan Age Stats - Current Day - Power BI"
+
+2.b. Page: NorCal - Table
+Table: Load Plan Age Stats - Current Day (% Format) - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_Load Plan Age Stats - Current Day (% Format) - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="Load Plan Age Stats - Current Day (% Format) - Power BI"]}[Data]
+in
+    #"dbo_Load Plan Age Stats - Current Day (% Format) - Power BI"
+
+2.c. Page: NorCal - Graph
+Table: Same as 2.a.
+
+2.d. Page: SoCal - Table
+Table: Same as 2.b.
+
+2.e. Page: SoCal - Graph
+Table: Same as 2.a.
+
+
