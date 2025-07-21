@@ -1,0 +1,99 @@
+Dwell
+
+1. Dwell Gate to Gate by Terminal (Month)
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/793bffea-e146-4657-bf67-76a9b4960995/ReportSection?experience=power-bi
+
+Query table: PlannerINFO_dwell_6month_average_by_month
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_PlannerINFO_dwell_6month_average_by_month = #"DWS No Rep Data"{[Schema="dbo",Item="PlannerINFO_dwell_6month_average_by_month"]}[Data],
+    #"Filtered Rows" = Table.SelectRows(dbo_PlannerINFO_dwell_6month_average_by_month, each true),
+    #"Added Conditional Column" = Table.AddColumn(#"Filtered Rows", "Terminal Combine", each if Text.Contains([Terminal], "Watson") then "MHX - Watson" else if Text.Contains([Terminal], "Napa") then "MHX - Napa" else [Terminal]),
+    #"Filtered Rows1: Removed Pittsburg" = Table.SelectRows(#"Added Conditional Column", each ([Terminal Combine] <> "MHX - Pittsburg"))
+in
+    #"Filtered Rows1: Removed Pittsburg"
+
+2. Dwell Gate to Gate by Terminal (Week)
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/cced3baf-ecca-4356-ba95-76687d72b1c6/ReportSection4653fb62094d0983f558?experience=power-bi
+
+2.a. Overview, 5 Days, 7 Days
+Query table: geo_fence_terminal_dwell_revised
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_geo_fence_terminal_dwell_revised = #"DWS No Rep Data"{[Schema="dbo",Item="geo_fence_terminal_dwell_revised"]}[Data],
+    #"Added Conditional Column: Terminal (PBI)" = Table.AddColumn(dbo_geo_fence_terminal_dwell_revised, "Terminal (PBI)", each if Text.Contains([terminal], "Alam") then "Alameda" else if Text.Contains([terminal], "Hele") then "Helendale" else if Text.Contains([terminal], "NAPA") then "Napa" else if Text.Contains([terminal], "Pitt") then "Pittsburg" else if Text.Contains([terminal], "Ranc") then "Rancho" else if Text.Contains([terminal], "Stoc") then "Stockton" else if Text.Contains([terminal], "Vern") then "Vernon" else if Text.Contains([terminal], "Wats") then "Watson" else if Text.Contains([terminal], "Port") then "Portland" else if Text.Contains([terminal], "Taco") then "Tacoma" else "Unclassified"),
+    #"Filtered Rows: Removed Pittsburg in Terminal (PBI)" = Table.SelectRows(#"Added Conditional Column: Terminal (PBI)", each ([#"Terminal (PBI)"] <> "Alameda" and [#"Terminal (PBI)"] <> "Pittsburg"))
+in
+    #"Filtered Rows: Removed Pittsburg in Terminal (PBI)"
+
+2.a. 6 Weeks
+Query table: PlannerINFO_dwell_6week_average_by_week
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_PlannerINFO_dwell_6week_average_by_week = #"DWS No Rep Data"{[Schema="dbo",Item="PlannerINFO_dwell_6week_average_by_week"]}[Data],
+    #"Added Conditional Column" = Table.AddColumn(dbo_PlannerINFO_dwell_6week_average_by_week, "Terminal Combine", each if Text.Contains([Terminal], "Watson") then "MHX - Watson" else if Text.Contains([Terminal], "Napa") then "MHX - Napa" else [Terminal]),
+    #"Filtered Rows Terminal Combine: Removed Pittsburg and Alameda" = Table.SelectRows(#"Added Conditional Column", each ([Terminal Combine] <> "MHX - Alameda" and [Terminal Combine] <> "MHX - Pittsburg"))
+in
+    #"Filtered Rows Terminal Combine: Removed Pittsburg and Alameda"
+
+2.b. Harbor
+Query table: geo_fence_terminal_dwell_revised_Harbor
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    dbo_geo_fence_terminal_dwell_revised_Harbor = #"DWS No Rep Data"{[Schema="dbo",Item="geo_fence_terminal_dwell_revised_Harbor"]}[Data],
+    #"Filtered Rows: plan_dest" = Table.SelectRows(dbo_geo_fence_terminal_dwell_revised_Harbor, each ([plan_dest] = "Pasha TI208 Coils" or [plan_dest] = "Pasha TI208 Coils Weekend" or [plan_dest] = "Pasha TI208 Misc" or [plan_dest] = "SSA Berth 206 - Tires" or [plan_dest] = "SSA Berth 206-coils" or [plan_dest] = "SSA Berth 206-misc")),
+    #"Added Conditional Column: plan_dest_revised" = Table.AddColumn(#"Filtered Rows: plan_dest", "plan_dest_revised", each if Text.Contains([plan_dest], "Pasha TI208 Misc") then "Pasha TI208 Misc" else if Text.Contains([plan_dest], "Pasha TI208 Coils") then "Pasha TI208 Coils" else if Text.Contains([plan_dest], "SSA Berth 206 - Tires") then "SSA Berth 206 - Tires" else if Text.Contains([plan_dest], "SSA Berth 206-misc") then "SSA Berth 206-misc" else if Text.Contains([plan_dest], "SSA Berth 206-coils") then "SSA Berth 206-coils" else "Others"),
+    #"Reordered Columns: plan_dest_revised" = Table.ReorderColumns(#"Added Conditional Column: plan_dest_revised",{"plan_dest", "plan_dest_revised", "Plan Date", "Average Daily Dwell", "Count", "Std Dev"})
+in
+    #"Reordered Columns: plan_dest_revised"
+
+3. Dwell Gate to Gate By Terminal - Combined
+https://app.powerbi.com/groups/e7f5fd70-4e9e-4b03-9066-058f006d2baa/reports/55b417bd-a0e6-400c-836e-a4e9b432dbab/ReportSection?experience=power-bi
+
+3.a. Summary
+Query table: PlannerINFO dwell by dest date fleet (year) - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_PlannerINFO dwell by dest date fleet (year) - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="PlannerINFO dwell by dest date fleet (year) - Power BI"]}[Data]
+in
+    #"dbo_PlannerINFO dwell by dest date fleet (year) - Power BI"
+
+3.b. Wk
+Query table: PlannerINFO dwell by dest date fleet (week) - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_PlannerINFO dwell by dest date fleet (week) - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="PlannerINFO dwell by dest date fleet (week) - Power BI"]}[Data]
+in
+    #"dbo_PlannerINFO dwell by dest date fleet (week) - Power BI"
+
+3.c. Mo
+Query table: PlannerINFO dwell by dest date fleet (month) - Power BI
+
+let
+    Source = Sql.Databases("sql16"),
+    #"DWS No Rep Data" = Source{[Name="DWS No Rep Data"]}[Data],
+    #"dbo_PlannerINFO dwell by dest date fleet (month) - Power BI" = #"DWS No Rep Data"{[Schema="dbo",Item="PlannerINFO dwell by dest date fleet (month) - Power BI"]}[Data]
+in
+    #"dbo_PlannerINFO dwell by dest date fleet (month) - Power BI"
+
+
+
+
+
+
+
+
+
+
